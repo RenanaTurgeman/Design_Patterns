@@ -9,7 +9,7 @@ EXEC := st_pipeline
 
 all: $(EXEC)
 
-$(EXEC): $(OBJS) alla.h
+$(EXEC): $(OBJS) task.h
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
 
 $(OBJS): %.o: %.c
