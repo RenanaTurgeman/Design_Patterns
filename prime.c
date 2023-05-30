@@ -1,5 +1,5 @@
 #include "task.h"
-
+/*PART A*/
 bool isPrime(unsigned int num) {
     if (num <= 1) {
         return false;  // Numbers less than or equal to 1 are not prime
