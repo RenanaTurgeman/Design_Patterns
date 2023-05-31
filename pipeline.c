@@ -1,6 +1,7 @@
 #include "task.h"
-pActiveObject ao4, ao3, ao2, ao1;
+
 size_t N;
+size_t seed;
 
 int func1(void *task)
 {
@@ -9,7 +10,6 @@ int func1(void *task)
     unsigned int num = rand() % 1000000;
     printf("AO1: %u\n", num);
     return num;
-    // enqueue(getQueue(ao2), &num);
 }
 
 int func2(void *task)
@@ -19,7 +19,6 @@ int func2(void *task)
     printf("AO2: %u is %s\n", num, isPrime(num) ? "prime" : "not prime");
     num += 11;
     return num;
-    // enqueue(getQueue(ao3), &num); // Assuming ao3 is the next active object
 }
 
 int func3(void *task)
@@ -28,7 +27,6 @@ int func3(void *task)
     printf("AO3: %u is %s\n", num, isPrime(num) ? "prime" : "not prime");
     num -= 13;
     return num;
-    // enqueue(getQueue(ao4), &num); // Assuming ao4 is the next active object
 }
 
 int func4(void *task)
@@ -42,7 +40,6 @@ int func4(void *task)
 
 int main(int argc, char *argv[])
 {
-    unsigned int seed;
     if (argc < 2)
     {
         printf("You must provide the number of tasks.\n");
@@ -51,18 +48,16 @@ int main(int argc, char *argv[])
 
     N = atoi(argv[1]);
     seed = (argc == 3) ? atoi(argv[2]) : time(NULL);
-
     srand(seed);
 
     pActiveObject ao4 = CreateActiveObject(func4, NULL);
     pActiveObject ao3 = CreateActiveObject(func3, ao4);
     pActiveObject ao2 = CreateActiveObject(func2, ao3);
     pActiveObject ao1 = CreateActiveObject(func1, ao2);
-
-    sleep(1);
-
-    while (true)
+    int run =1;
+    while (run)
     {
+        sleep(1);
         if (N == 0)
         {
             stop(ao1);
@@ -71,9 +66,10 @@ int main(int argc, char *argv[])
             printf("after stop ao2\n");
             stop(ao3);
             stop(ao4);
-            break;
+            run=0;
         }
     }
 
-    return 0;
+    printf("the end of the program\n");
+    return run ? 1 :0;
 }

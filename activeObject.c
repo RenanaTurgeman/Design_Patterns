@@ -10,15 +10,17 @@ void *active_object_run(void *arg)
 
     for (int i = 0; i < N; i++)
     {
-        if (temp->func != func1){
+        if (temp->func != func1)
+        {
             pthread_mutex_lock(&temp->queue->lock);
-            while (temp->queue->head == NULL) {
+            while (temp->queue->head == NULL)
+            {
                 pthread_cond_wait(&temp->queue->cond, &temp->queue->lock);
             }
             data = dequeue(temp->queue);
             pthread_mutex_unlock(&temp->queue->lock);
         }
-        
+
         if (temp->func != NULL)
         {
             result = temp->func(data);
@@ -35,7 +37,7 @@ void *active_object_run(void *arg)
     return NULL;
 }
 
-pActiveObject CreateActiveObject(int (*func)(void *), pActiveObject next)
+pActiveObject CreateActiveObject(int (func)(void *), pActiveObject next)
 {
     printf("creatObject\n");
     pActiveObject ao = (pActiveObject)malloc(sizeof(ActiveObject));
@@ -85,36 +87,42 @@ void stop(pActiveObject ao)
     if (ao != NULL)
     {
         pthread_cancel(*(ao->thread));
-        // free(ao->thread);
         free_queue(ao->queue);
         free(ao);
     }
 }
 
-void enqueue(Queue* q, void* data) {
+void enqueue(Queue *q, void *data)
+{
     printf("start enqueue\n");
-    if (q == NULL) return;
-    node* n = (node*)malloc(sizeof(node));
-    if (n == NULL) {
+    if (q == NULL)
+        return;
+    node *n = (node *)malloc(sizeof(node));
+    if (n == NULL)
+    {
         perror("Failed to allocate memory for Node.\n");
         return;
     }
     n->data = data;
     n->next = NULL;
 
-    if (q->tail == NULL) {
+    if (q->tail == NULL)
+    {
         q->head = n;
         q->tail = n;
-    } else {
+    }
+    else
+    {
         q->tail->next = n;
         q->tail = n;
     }
     printf("end enqueue\n");
 }
 
-void* dequeue(Queue* q) {
+void *dequeue(Queue *q)
+{
 
-    node* node = q->head;
+    node *node = q->head;
     q->head = node->next;
     void *data = node->data;
     free(node);

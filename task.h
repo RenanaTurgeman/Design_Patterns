@@ -1,8 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-#include <pthread.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdbool.h>
@@ -17,7 +15,6 @@
 #include <stdlib.h>
 
 extern size_t N;
-typedef void (active_object_func_t)(void);
 
 typedef struct node {
     void* data;
@@ -49,7 +46,7 @@ void free_queue(Queue* queue);
 
 //PART C
 void* active_object_run(void* arg);
-pActiveObject CreateActiveObject(int (*func)(void *), pActiveObject next);
+pActiveObject CreateActiveObject(int (func)(void *), pActiveObject next);
 Queue* getQueue(pActiveObject ao);
 pActiveObject getNext(pActiveObject ao);
 void stop(pActiveObject ao) ;
