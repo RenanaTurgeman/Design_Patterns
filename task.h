@@ -48,6 +48,14 @@ void* dequeue(Queue* q);
 
 //PART C
 void* active_object_run(void* arg);
-pActiveObject CreateActiveObject(int (*func)(void *));
+pActiveObject CreateActiveObject(int (*func)(void *), pActiveObject next);
 Queue* getQueue(pActiveObject ao);
+pActiveObject getNext(pActiveObject ao);
 void stop(pActiveObject ao) ;
+
+//PART D
+void func1(void* task);
+void func2(void* task) ;
+void func3(void* task) ;
+void func4(void* task);
+int main(int argc, char *argv[]) ;
