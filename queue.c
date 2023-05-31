@@ -1,56 +1,61 @@
 #include "task.h"
 /*PART B*/
+Queue* create_queue() {
+    Queue* q = (Queue*)malloc(sizeof(Queue));
+    if (q == NULL) {
+        perror("Failed to allocate memory for Queue.\n");
+        return NULL;
+    }
 
-queue_t* queue_create() {
-    queue_t* q = malloc(sizeof(queue_t));
-    node_t* dummy = malloc(sizeof(node_t));
-    dummy->next = NULL;
+    q->head = NULL;
+    q->tail = NULL;
+    pthread_mutex_init(&(q->lock), NULL);
+    pthread_cond_init(&(q->cond), NULL);
 
-    q->head = q->tail = dummy;
-    pthread_mutex_init(&q->head_mutex, NULL);
-    pthread_mutex_init(&q->tail_mutex, NULL);
-    pthread_cond_init(&q->cond, NULL);
     return q;
 }
 
-void queue_enqueue(queue_t* q, void* data) {
-    node_t* node = malloc(sizeof(node_t));
-    node->data = data;
-    node->next = NULL;
+void enqueue(Queue* q, void* data) {
+    if (q == NULL) return;
+    node* n = (node*)malloc(sizeof(node));
+    if (n == NULL) {
+        perror("Failed to allocate memory for Node.\n");
+        return;
+    }
+    n->data = data;
+    n->next = NULL;
 
-    pthread_mutex_lock(&q->tail_mutex);
-    q->tail->next = node;
-    q->tail = node;
-    pthread_cond_signal(&q->cond);
-    pthread_mutex_unlock(&q->tail_mutex);
+    pthread_mutex_lock(&(q->lock));
+
+    if (q->tail == NULL) {
+        q->head = n;
+        q->tail = n;
+    } else {
+        q->tail->next = n;
+        q->tail = n;
+    }
+    pthread_cond_signal(&(q->cond));
+    pthread_mutex_unlock(&(q->lock));
 }
 
-void* queue_dequeue(queue_t* q) {
-    pthread_mutex_lock(&q->head_mutex);
-    while (q->head->next == NULL) {
-        pthread_cond_wait(&q->cond, &q->head_mutex);
+void* dequeue(Queue* q) {
+    if (q == NULL) return NULL;
+
+    pthread_mutex_lock(&(q->lock));
+
+    while (q->head == NULL) {
+        pthread_cond_wait(&(q->cond), &(q->lock));
     }
 
-    node_t* old_head = q->head;
-    node_t* new_head = old_head->next;
-    void* data = new_head->data;
-    q->head = new_head;
-    pthread_mutex_unlock(&q->head_mutex);
+    node* temp = q->head;
+    void* data = temp->data;
+    q->head = q->head->next;
+    if (q->head == NULL) {
+        q->tail = NULL;
+    }
 
-    free(old_head);
+    pthread_mutex_unlock(&(q->lock));
+    free(temp);
+
     return data;
-}
-
-void queue_destroy(queue_t* q) {
-    // Empty the queue
-    while (q->head != NULL) {
-        node_t* tmp = q->head;
-        q->head = q->head->next;
-        free(tmp);
-    }
-
-    pthread_mutex_destroy(&q->head_mutex);
-    pthread_mutex_destroy(&q->tail_mutex);
-    pthread_cond_destroy(&q->cond);
-    free(q);
 }
