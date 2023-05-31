@@ -54,8 +54,8 @@ pActiveObject getNext(pActiveObject ao);
 void stop(pActiveObject ao) ;
 
 //PART D
-void func1(void* task);
-void func2(void* task) ;
-void func3(void* task) ;
-void func4(void* task);
+int func1(void* task);
+int func2(void* task) ;
+int func3(void* task) ;
+int func4(void* task);
 int main(int argc, char *argv[]) ;

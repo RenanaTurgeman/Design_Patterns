@@ -1,15 +1,49 @@
 #include "task.h"
 /*PART C*/
 
+// void *active_object_run(void *arg)
+// {
+//     pActiveObject ao = (pActiveObject)arg;
+//     for (int i = 0; i < N; ++i)
+//     { 
+//         void *task = dequeue(ao->queue);
+//         if (task != NULL)
+//         {
+//             ao->func(task);
+//         }
+//     }
+//     N = 0;
+//     return NULL;
+// }
+
 void *active_object_run(void *arg)
 {
-    pActiveObject ao = (pActiveObject)arg;
-    for (int i = 0; i < N; ++i)
-    { 
-        void *task = dequeue(ao->queue);
-        if (task != NULL)
+    pActiveObject temp = (pActiveObject)arg;
+    void *data;
+    int result;
+    int done = 0;
+
+    for (int i = 0; i < N; i++)
+    {
+        if (temp->func != func1){
+            pthread_mutex_lock(&temp->queue->lock);
+            while (temp->queue->head == NULL) {
+                pthread_cond_wait(&temp->queue->cond, &temp->queue->lock);
+            }
+            data = dequeue(temp->queue);
+            pthread_mutex_unlock(&temp->queue->lock);
+        }
+        
+        if (temp->func != NULL)
         {
-            ao->func(task);
+            result = temp->func(data);
+            if (temp->next)
+            {
+                pthread_mutex_lock(&temp->next->queue->lock);
+                enqueue(temp->next->queue, (void *)result);
+                pthread_mutex_unlock(&temp->next->queue->lock);
+                pthread_cond_signal(&temp->next->queue->cond);
+            }
         }
     }
     N = 0;
@@ -29,6 +63,7 @@ pActiveObject CreateActiveObject(int (*func)(void *), pActiveObject next)
     ao->queue = create_queue();
     ao->func = func;
     ao->next = next;
+    ao->thread = NULL;
 
     ao->thread = (pthread_t *)malloc(sizeof(pthread_t));
     if (ao->thread == NULL)
@@ -64,9 +99,8 @@ void stop(pActiveObject ao)
 {
     if (ao != NULL)
     {
-        // We need to implement a way to break out of the while loop in active_object_run here.
-        pthread_join(*(ao->thread), NULL);
-        free(ao->thread);
+        pthread_cancel(*(ao->thread));
+        // free(ao->thread);
         free(ao->queue);
         free(ao);
     }

@@ -6,7 +6,6 @@ Queue* create_queue() {
         perror("Failed to allocate memory for Queue.\n");
         return NULL;
     }
-
     q->head = NULL;
     q->tail = NULL;
     pthread_mutex_init(&(q->lock), NULL);
@@ -16,6 +15,7 @@ Queue* create_queue() {
 }
 
 void enqueue(Queue* q, void* data) {
+    printf("start enqueue\n");
     if (q == NULL) return;
     node* n = (node*)malloc(sizeof(node));
     if (n == NULL) {
@@ -36,6 +36,7 @@ void enqueue(Queue* q, void* data) {
     }
     pthread_cond_signal(&(q->cond));
     pthread_mutex_unlock(&(q->lock));
+    printf("end enqueue\n");
 }
 
 void* dequeue(Queue* q) {
@@ -48,14 +49,14 @@ void* dequeue(Queue* q) {
     }
 
     node* temp = q->head;
-    void* data = temp->data;
     q->head = q->head->next;
+    void* data = temp->data;
     if (q->head == NULL) {
         q->tail = NULL;
     }
 
-    pthread_mutex_unlock(&(q->lock));
     free(temp);
+    pthread_mutex_unlock(&(q->lock));
 
     return data;
 }
