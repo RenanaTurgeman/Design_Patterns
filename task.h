@@ -42,9 +42,10 @@ typedef struct _ActiveObject{
 bool isPrime(unsigned int num);
 
 //PART B
-Queue* create_queue();
+void* create_queue();
 void enqueue(Queue* q, void* data);
 void* dequeue(Queue* q);
+void free_queue(Queue* queue);
 
 //PART C
 void* active_object_run(void* arg);

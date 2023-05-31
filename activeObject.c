@@ -1,21 +1,6 @@
 #include "task.h"
 /*PART C*/
 
-// void *active_object_run(void *arg)
-// {
-//     pActiveObject ao = (pActiveObject)arg;
-//     for (int i = 0; i < N; ++i)
-//     { 
-//         void *task = dequeue(ao->queue);
-//         if (task != NULL)
-//         {
-//             ao->func(task);
-//         }
-//     }
-//     N = 0;
-//     return NULL;
-// }
-
 void *active_object_run(void *arg)
 {
     pActiveObject temp = (pActiveObject)arg;
@@ -101,7 +86,37 @@ void stop(pActiveObject ao)
     {
         pthread_cancel(*(ao->thread));
         // free(ao->thread);
-        free(ao->queue);
+        free_queue(ao->queue);
         free(ao);
     }
+}
+
+void enqueue(Queue* q, void* data) {
+    printf("start enqueue\n");
+    if (q == NULL) return;
+    node* n = (node*)malloc(sizeof(node));
+    if (n == NULL) {
+        perror("Failed to allocate memory for Node.\n");
+        return;
+    }
+    n->data = data;
+    n->next = NULL;
+
+    if (q->tail == NULL) {
+        q->head = n;
+        q->tail = n;
+    } else {
+        q->tail->next = n;
+        q->tail = n;
+    }
+    printf("end enqueue\n");
+}
+
+void* dequeue(Queue* q) {
+
+    node* node = q->head;
+    q->head = node->next;
+    void *data = node->data;
+    free(node);
+    return data;
 }
