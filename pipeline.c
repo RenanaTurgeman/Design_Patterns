@@ -6,7 +6,7 @@ size_t seed;
 int func1(void *task)
 {
     usleep(1000);
-    unsigned int num = rand() % 1000000;
+    unsigned int num = (rand() % 900001) + 100000; //rand() % (999999 - 100000 + 1) + 999999;
     // printf("AO1: %u\n", num);
     return num;
 }
@@ -14,7 +14,7 @@ int func1(void *task)
 int func2(void *task)
 {
     int num = (int)task;
-    printf("%u\n", num); // print the number
+    printf("%d\n", num); // print the number
     printf("%s\n", isPrime(num) ? "true" : "false"); //print if he prime
     num += 11;
     return num;
@@ -23,7 +23,7 @@ int func2(void *task)
 int func3(void *task)
 {
     int num = (int)task;
-    printf("%u\n", num); // print the number
+    printf("%d\n", num); // print the number
     printf("%s\n", isPrime(num) ? "true" : "false"); //print if he prime
     num -= 13;
     return num;
@@ -32,9 +32,9 @@ int func3(void *task)
 int func4(void *task)
 {
     int num = (int)task;
-    printf("%u\n", num); // print the number
+    printf("%d\n", num); // print the number
     num += 2;
-    printf("%u\n", num); // print the number
+    printf("%d\n", num); // print the number
     return 0;
 }
 
