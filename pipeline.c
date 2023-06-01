@@ -7,14 +7,15 @@ int func1(void *task)
 {
     usleep(1000);
     unsigned int num = rand() % 1000000;
-    printf("AO1: %u\n", num);
+    // printf("AO1: %u\n", num);
     return num;
 }
 
 int func2(void *task)
 {
     int num = (int)task;
-    printf("AO2: %u is %s\n", num, isPrime(num) ? "prime" : "not prime");
+    printf("%u\n", num); // print the number
+    printf("%s\n", isPrime(num) ? "true" : "false"); //print if he prime
     num += 11;
     return num;
 }
@@ -22,7 +23,8 @@ int func2(void *task)
 int func3(void *task)
 {
     int num = (int)task;
-    printf("AO3: %u is %s\n", num, isPrime(num) ? "prime" : "not prime");
+    printf("%u\n", num); // print the number
+    printf("%s\n", isPrime(num) ? "true" : "false"); //print if he prime
     num -= 13;
     return num;
 }
@@ -30,9 +32,9 @@ int func3(void *task)
 int func4(void *task)
 {
     int num = (int)task;
-    printf("AO4: %u\n", num);
+    printf("%u\n", num); // print the number
     num += 2;
-    printf("AO4: New number is %u\n", num);
+    printf("%u\n", num); // print the number
     return 0;
 }
 
