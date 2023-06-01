@@ -37,9 +37,8 @@ void *active_object_run(void *arg)
     return NULL;
 }
 
-pActiveObject CreateActiveObject(int (func)(void *), pActiveObject next)
+pActiveObject CreateActiveObject(void (func)(void *), pActiveObject next)
 {
-    printf("creatObject\n");
     pActiveObject ao = (pActiveObject)malloc(sizeof(ActiveObject));
     if (ao == NULL)
     {
@@ -94,7 +93,6 @@ void stop(pActiveObject ao)
 
 void enqueue(Queue *q, void *data)
 {
-    printf("start enqueue\n");
     if (q == NULL)
         return;
     node *n = (node *)malloc(sizeof(node));
@@ -106,7 +104,7 @@ void enqueue(Queue *q, void *data)
     n->data = data;
     n->next = NULL;
 
-    if (q->tail == NULL)
+    if (q->size == 0)
     {
         q->head = n;
         q->tail = n;
@@ -116,15 +114,15 @@ void enqueue(Queue *q, void *data)
         q->tail->next = n;
         q->tail = n;
     }
-    printf("end enqueue\n");
+    q->size +=1;
 }
 
 void *dequeue(Queue *q)
 {
-
     node *node = q->head;
     q->head = node->next;
     void *data = node->data;
     free(node);
+    q->size--;
     return data;
 }

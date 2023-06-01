@@ -26,6 +26,7 @@ typedef struct Queue {
     node* tail;
     pthread_mutex_t lock;
     pthread_cond_t cond;
+    size_t size;
 } Queue;
 
 typedef struct _ActiveObject{
@@ -46,7 +47,7 @@ void free_queue(Queue* queue);
 
 //PART C
 void* active_object_run(void* arg);
-pActiveObject CreateActiveObject(int (func)(void *), pActiveObject next);
+pActiveObject CreateActiveObject(void (func)(void *), pActiveObject next);
 Queue* getQueue(pActiveObject ao);
 pActiveObject getNext(pActiveObject ao);
 void stop(pActiveObject ao) ;
