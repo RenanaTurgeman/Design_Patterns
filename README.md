@@ -2,7 +2,7 @@
 task 5 in operating systems
 
 ## Project Overview
-This project, named st_pipeline, is a C++ multi-threaded application that showcases the concept of a pipeline of tasks using active objects (AOs).
+This project, named st_pipeline, is a C multi-threaded application that showcases the concept of a pipeline of tasks using active objects (AOs).
 
 In computing, an active object is an object-oriented program component that encapsulates its own thread of control. In this project, we construct a pipeline where each component, or active object, operates in a separate thread and passes tasks to the next component in the pipeline.
 
@@ -10,7 +10,9 @@ The program features a prime number checker, a thread-safe queue implementation 
 
 ## Getting Started
 ### Prerequisites
-The program requires a C++ compiler that supports C++11 or later, and the make utility installed on your machine.
+To compile and run the server, you need to have the following dependencies installed:
+
+- C compiler (e.g., GCC)
 
 ### Compilation and Execution
 To compile the project, navigate to the project's root directory and run the following command in the terminal:
